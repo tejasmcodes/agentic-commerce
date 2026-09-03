@@ -1,5 +1,5 @@
 from agent.buyer.utils.state import AgentState
-from agent.buyer.utils.tools import parse_requirements,search_products
+from agent.buyer.utils.tools import parse_requirements,search_products, choose_cheapest_product
 
 
 def understand_request(state: AgentState):
@@ -14,4 +14,11 @@ def search_catalog(state: AgentState):
     products = search_products(requirements)
     return{
         "products": products
+    }
+
+def recommend_product(state: AgentState):
+    products = state["products"]
+    recommend_product = choose_cheapest_product(products)
+    return {
+        "recommendation":recommend_product
     }
