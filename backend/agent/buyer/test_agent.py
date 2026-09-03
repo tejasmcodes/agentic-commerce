@@ -4,7 +4,7 @@ initial_state = {
     "request": "I need a laptop under ₹80,000",
     "requirements": {},
     "products": [],
-    "recommendation": {},
+    "recommendation": None,
     "approved": False,
     "policy_result": {},
 }

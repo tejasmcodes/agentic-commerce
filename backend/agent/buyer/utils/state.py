@@ -1,8 +1,8 @@
 from typing import TypedDict
 class Requirements(TypedDict):
-    category:   str
-    price:  int
-    currency:   str
+    category:   str | None
+    price:  int | None
+    currency:   str | None
 
 class Product(TypedDict):
     id: str
@@ -12,11 +12,10 @@ class Product(TypedDict):
     currency: str
     available: bool
 
-
 class AgentState(TypedDict):
     request:    str
     requirements:   Requirements
     products:   list[Product]
-    recommendation: dict
+    recommendation: Product | None
     approved:   bool
     policy_result:  dict
