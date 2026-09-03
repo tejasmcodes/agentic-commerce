@@ -113,5 +113,17 @@ def search_products(requirements: Requirements) -> list[Product]:
 
     return products
 
+def choose_cheapest_product(products: list[Product]) -> Product | None:
+    if not products:
+        return None
 
+    min_price = products[0]["price"]
+    recommended = products[0]
+
+    for product in products:
+        if product["price"] < min_price:
+            min_price = product["price"]
+            recommended = product
+
+    return recommended
 
