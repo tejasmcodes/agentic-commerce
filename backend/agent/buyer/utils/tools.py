@@ -1,4 +1,5 @@
 from agent.buyer.utils.state import Requirements, Product
+import re
 
 CATALOG = [
         {
@@ -75,6 +76,28 @@ CATALOG = [
         },
     ]
 
+CATEGORIES = ["phone","laptop","running_shoe"]
+
+def parse_requirements(request: str) -> Requirements:
+    pattern = r'(₹|Rs\.?|INR|\$)\s?(\d[\d,]*)'
+    match = re.search(pattern, request)
+    currency, price = None, None
+    if match:
+        currency = "INR" if match.group(1) == "₹" else match.group(1)
+        price = int(match.group(2).replace(",", ""))
+    category = None
+    words = request.split()
+    for word in words:
+        if word.lower() in CATEGORIES:
+            category = word.lower()
+
+    requirements = {"category": category,
+            "price": price,
+            "currency": currency}
+    
+    return requirements
+            
+        
 
 def search_products(requirements: Requirements) -> list[Product]:
     products=[]

@@ -12,11 +12,10 @@ class Product(TypedDict):
     currency: str
     available: bool
 
-
 class AgentState(TypedDict):
     request:    str
     requirements:   Requirements
     products:   list[Product]
-    recommendation: dict
+    recommendation: Product | None
     approved:   bool
     policy_result:  dict
