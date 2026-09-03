@@ -1,4 +1,5 @@
 from agent.buyer.utils.state import AgentState
+from agent.buyer.utils.tools import search_products
 import re
 
 def understand_request(state: AgentState):
@@ -21,4 +22,11 @@ def understand_request(state: AgentState):
             "price": price,
             "currency": currency
         }
+    }
+
+def search_catalog(state: AgentState):
+    requirements = state["requirements"]
+    products = search_products(requirements)
+    return{
+        "products": products
     }

@@ -1,0 +1,94 @@
+from agent.buyer.utils.state import Requirements, Product
+
+CATALOG = [
+        {
+            "id": "laptop-001",
+            "name": "DevBook Pro",
+            "category": "laptop",
+            "price": 72000,
+            "currency": "INR",
+            "available": True,
+        },
+        {
+            "id": "laptop-002",
+            "name": "CodeMaster 14",
+            "category": "laptop",
+            "price": 78000,
+            "currency": "INR",
+            "available": True,
+        },
+        {
+            "id": "laptop-003",
+            "name": "UltraWork X1",
+            "category": "laptop",
+            "price": 85000,
+            "currency": "INR",
+            "available": True,
+        },
+        {
+            "id": "laptop-004",
+            "name": "ThinkPro 16",
+            "category": "laptop",
+            "price": 68000,
+            "currency": "INR",
+            "available": False,
+        },
+        {
+            "id": "phone-001",
+            "name": "PixelMax 9",
+            "category": "phone",
+            "price": 55000,
+            "currency": "INR",
+            "available": True,
+        },
+        {
+            "id": "phone-002",
+            "name": "Galaxy Nova",
+            "category": "phone",
+            "price": 42000,
+            "currency": "INR",
+            "available": True,
+        },
+        {
+            "id": "phone-003",
+            "name": "BudgetPhone X",
+            "category": "phone",
+            "price": 18000,
+            "currency": "INR",
+            "available": True,
+        },
+        {
+            "id": "shoe-001",
+            "name": "RunFast Pro",
+            "category": "running_shoe",
+            "price": 8000,
+            "currency": "INR",
+            "available": True,
+        },
+        {
+            "id": "shoe-002",
+            "name": "TrailRunner X",
+            "category": "running_shoe",
+            "price": 12000,
+            "currency": "INR",
+            "available": True,
+        },
+    ]
+
+
+def search_products(requirements: Requirements) -> list[Product]:
+    products=[]
+    required_category = requirements["category"]
+    max_price = requirements["price"]
+    required_currency = requirements["currency"]
+    for product in CATALOG:
+        if( product["category"] == required_category
+        and product["currency"] == required_currency
+        and product["price"] <= max_price
+        and product["available"] == True):
+            products.append(product)
+
+    return products
+
+
+

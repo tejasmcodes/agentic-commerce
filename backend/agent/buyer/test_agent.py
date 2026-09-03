@@ -1,7 +1,7 @@
 from agent.buyer.agent import buyer_agent
 
 initial_state = {
-    "request": "I need a phone under ₹30,000",
+    "request": "I need a laptop under ₹80,000",
     "requirements": {},
     "products": [],
     "recommendation": {},
