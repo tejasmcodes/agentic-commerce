@@ -1,5 +1,6 @@
 from agent.buyer.utils.state import AgentState
 from agent.buyer.utils.tools import parse_requirements,search_products, choose_cheapest_product
+from langgraph.types import interrupt
 
 
 def understand_request(state: AgentState):
@@ -18,7 +19,25 @@ def search_catalog(state: AgentState):
 
 def recommend_product(state: AgentState):
     products = state["products"]
-    recommend_product = choose_cheapest_product(products)
+    recommendation  = choose_cheapest_product(products)
     return {
-        "recommendation":recommend_product
+        "recommendation":recommendation 
+    }
+
+
+def approval(state: AgentState):
+    recommendation = state["recommendation"]
+
+    if recommendation is None:
+        return {
+            "approved": False
+        }
+
+    user_response = interrupt({
+        "message": "Do you approve this purchase?",
+        "product": recommendation
+    })
+
+    return {
+        "approved": bool(user_response)
     }
