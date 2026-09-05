@@ -1,6 +1,6 @@
 from langgraph.types import Command
 
-from agent.buyer.agent import buyer_agent
+from backend.agent.buyer.agent import buyer_agent
 
 
 initial_state = {

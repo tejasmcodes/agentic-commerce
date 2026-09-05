@@ -1,7 +1,7 @@
 from langgraph.graph import StateGraph, START, END
 
-from agent.buyer.utils.state import AgentState
-from agent.buyer.utils.nodes import (
+from backend.agent.buyer.utils.state import AgentState
+from backend.agent.buyer.utils.nodes import (
     understand_request,
     search_catalog,
     recommend_product,

@@ -1,4 +1,4 @@
-from agent.buyer.utils.state import Requirements, Product
+from backend.agent.buyer.utils.state import Requirements, Product
 import re
 import os
 import razorpay

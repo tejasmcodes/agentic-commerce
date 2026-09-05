@@ -1,5 +1,5 @@
-from agent.buyer.utils.state import AgentState
-from agent.buyer.utils.tools import (
+from backend.agent.buyer.utils.state import AgentState
+from backend.agent.buyer.utils.tools import (
     parse_requirements,
     search_products,
     choose_cheapest_product,
