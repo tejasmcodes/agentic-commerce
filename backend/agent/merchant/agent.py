@@ -44,3 +44,5 @@ def build_merchant_graph():
     checkpointer = MemorySaver()
 
     return graph.compile(checkpointer=checkpointer)
+
+merchant_agent = build_merchant_graph()

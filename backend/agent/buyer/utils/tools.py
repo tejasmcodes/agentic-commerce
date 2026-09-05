@@ -6,7 +6,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-AUDIT_FILE = Path("buyer_audit_log.json")
+AUDIT_FILE = Path(__file__).resolve().parents[3] / "buyer_audit_log.json"
 
 CATALOG = [
         {

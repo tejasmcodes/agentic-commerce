@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 
-AUDIT_FILE = Path("merchant_audit_log.json")
+AUDIT_FILE = Path(__file__).resolve().parents[3] / "merchant_audit_log.json"
 
 
 def write_merchant_audit_log(entry: dict) -> None:
