@@ -9,4 +9,7 @@ __pycache__/
 
 # Go
 bin/
-backend/audit_log.json
+
+# audit logs
+backend/buyer_audit_log.json
+backend/merchant_audit_log.json
