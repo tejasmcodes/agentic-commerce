@@ -127,3 +127,26 @@ def choose_cheapest_product(products: list[Product]) -> Product | None:
 
     return recommended
 
+def check_policy(product: Product, requirements: Requirements) -> dict:
+    if product["price"] > requirements["price"]:
+        return {
+            "allowed": False,
+            "reason": "Product exceeds the user's budget.",
+        }
+
+    if product["currency"] != requirements["currency"]:
+        return {
+            "allowed": False,
+            "reason": "Currency mismatch.",
+        }
+
+    if not product["available"]:
+        return {
+            "allowed": False,
+            "reason": "Product is unavailable.",
+        }
+
+    return {
+        "allowed": True,
+        "reason": "All policy checks passed.",
+    }
