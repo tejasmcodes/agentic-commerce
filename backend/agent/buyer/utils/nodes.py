@@ -4,6 +4,7 @@ from agent.buyer.utils.tools import (
     search_products,
     choose_cheapest_product,
     check_policy,
+    create_payment_order
 )
 from langgraph.types import interrupt
 
@@ -75,3 +76,48 @@ def policy_check(state: AgentState):
     return {
         "policy_result": result
     }
+
+def create_payment(state: AgentState):
+    if not state["approved"]:
+        return {
+            "policy_result": {
+                "allowed": False,
+                "reason": "Payment blocked: user did not approve.",
+            }
+        }
+
+    if not state["policy_result"].get("allowed"):
+        return {
+            "policy_result": state["policy_result"]
+        }
+
+    recommendation = state["recommendation"]
+
+    if recommendation is None:
+        return {
+            "policy_result": {
+                "allowed": False,
+                "reason": "Payment blocked: no recommendation.",
+            }
+        }
+
+    try:
+        order = create_payment_order(recommendation)
+
+        return {
+            "policy_result": {
+                **state["policy_result"],
+                "payment": order,
+            }
+        }
+
+    except Exception as e:
+        return {
+            "policy_result": {
+                **state["policy_result"],
+                "payment": {
+                    "status": "failed",
+                    "reason": str(e),
+                },
+            }
+        }

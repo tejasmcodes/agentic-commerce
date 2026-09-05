@@ -1,5 +1,7 @@
 from agent.buyer.utils.state import Requirements, Product
 import re
+import os
+import razorpay
 
 CATALOG = [
         {
@@ -149,4 +151,25 @@ def check_policy(product: Product, requirements: Requirements) -> dict:
     return {
         "allowed": True,
         "reason": "All policy checks passed.",
+    }
+
+def create_payment_order(product: Product) -> dict:
+    client = razorpay.Client(
+        auth=(
+            os.environ["RAZORPAY_KEY_ID"],
+            os.environ["RAZORPAY_KEY_SECRET"],
+        )
+    )
+
+    order = client.order.create({
+        "amount": product["price"] * 100,
+        "currency": product["currency"],
+        "receipt": f"receipt_{product['id']}",
+    })
+
+    return {
+        "order_id": order["id"],
+        "status": order["status"],
+        "amount": order["amount"],
+        "currency": order["currency"],
     }
