@@ -2,6 +2,11 @@ from agent.buyer.utils.state import Requirements, Product
 import re
 import os
 import razorpay
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+
+AUDIT_FILE = Path("audit_log.json")
 
 CATALOG = [
         {
@@ -173,3 +178,19 @@ def create_payment_order(product: Product) -> dict:
         "amount": order["amount"],
         "currency": order["currency"],
     }
+
+
+def write_audit_log(entry: dict) -> None:
+    logs = []
+
+    if AUDIT_FILE.exists():
+        with open(AUDIT_FILE, "r") as f:
+            logs = json.load(f)
+
+    logs.append({
+        **entry,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    })
+
+    with open(AUDIT_FILE, "w") as f:
+        json.dump(logs, f, indent=2)

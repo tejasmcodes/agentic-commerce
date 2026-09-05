@@ -4,7 +4,8 @@ from agent.buyer.utils.tools import (
     search_products,
     choose_cheapest_product,
     check_policy,
-    create_payment_order
+    create_payment_order,
+    write_audit_log
 )
 from langgraph.types import interrupt
 
@@ -121,3 +122,28 @@ def create_payment(state: AgentState):
                 },
             }
         }
+
+
+def audit_transaction(state: AgentState):
+    recommendation = state["recommendation"]
+    payment = state["policy_result"].get("payment")
+
+    write_audit_log({
+        "request": state["request"],
+        "product_id": recommendation["id"] if recommendation else None,
+        "product_name": recommendation["name"] if recommendation else None,
+        "amount": recommendation["price"] if recommendation else None,
+        "currency": recommendation["currency"] if recommendation else None,
+        "approved": state["approved"],
+        "policy": state["policy_result"],
+        "payment": payment,
+        "status": (
+            "success"
+            if payment and payment.get("status") == "created"
+            else "rejected"
+            if not state["approved"]
+            else "policy_blocked"
+        ),
+    })
+
+    return {}
