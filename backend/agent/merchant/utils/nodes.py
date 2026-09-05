@@ -1,24 +1,22 @@
 from langgraph.types import interrupt
 
 from .state import MerchantState
-from .tools import write_merchant_audit_log
+from .tools import (
+    detect_opportunity_with_llm,
+    write_merchant_audit_log,
+)
+
+from backend.agent.buyer.utils.tools import CATALOG
 
 
 def detect_opportunity(state: MerchantState) -> MerchantState:
-    """Detect a simple cross-sell opportunity from the merchant catalog."""
+    """Detect a cross-sell opportunity using the merchant catalog."""
 
-    opportunity = {
-        "source_category": "running_shoe",
-        "target_category": "socks",
-        "reason": (
-            "Running-shoe customers have an opportunity for "
-            "a complementary socks product."
-        ),
-    }
+    opportunity = detect_opportunity_with_llm(CATALOG)
 
     return {
         **state,
-        "opportunity": opportunity,
+        "opportunity": opportunity.model_dump(),
     }
 
 
