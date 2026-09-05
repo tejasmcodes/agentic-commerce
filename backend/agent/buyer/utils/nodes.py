@@ -2,7 +2,7 @@ from backend.agent.buyer.utils.state import AgentState
 from backend.agent.buyer.utils.tools import (
     parse_requirements,
     search_products,
-    choose_cheapest_product,
+    recommend_product_with_llm,
     check_policy,
     create_payment_order,
     write_audit_log
@@ -26,9 +26,15 @@ def search_catalog(state: AgentState):
 
 def recommend_product(state: AgentState):
     products = state["products"]
-    recommendation  = choose_cheapest_product(products)
+
+    recommendation = recommend_product_with_llm(
+        state["request"],
+        state["requirements"],
+        products,
+    )
+
     return {
-        "recommendation":recommendation 
+        "recommendation": recommendation
     }
 
 
