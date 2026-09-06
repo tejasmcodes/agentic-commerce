@@ -48,11 +48,20 @@ def buyer_start(payload: BuyerStartRequest):
 
     result = buyer_agent.invoke(initial_state, config)
 
-    interrupt = result["__interrupt__"][0]
+    interrupts = result.get("__interrupt__", [])
+
+    if not interrupts:
+        return {
+            "thread_id": thread_id,
+            "status": "no_results",
+            "message": "No matching product was found.",
+            "approval": None,
+        }
+
+    interrupt = interrupts[0]
 
     return {
         "thread_id": thread_id,
-        "status": "awaiting_approval",
         "approval": interrupt.value,
     }
 
