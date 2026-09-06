@@ -1,8 +1,9 @@
 from langgraph.types import interrupt
 
-from .state import MerchantState
+from .state import MerchantOpportunity, MerchantState
 from .tools import (
     detect_opportunity_with_llm,
+    generate_campaign_with_llm,
     write_merchant_audit_log,
 )
 
@@ -21,21 +22,16 @@ def detect_opportunity(state: MerchantState) -> MerchantState:
 
 
 def generate_campaign(state: MerchantState) -> MerchantState:
-    """Turn the opportunity into a concrete campaign proposal."""
-
     opportunity = state["opportunity"]
 
-    campaign = {
-        "name": "Run Better Bundle",
-        "source_category": opportunity["source_category"],
-        "target_category": opportunity["target_category"],
-        "offer": "10% off socks with running shoes",
-        "reason": "Increase average order value through a complementary product.",
-    }
+    campaign = generate_campaign_with_llm(
+    MerchantOpportunity(**opportunity),
+    CATALOG,
+    )
 
     return {
         **state,
-        "campaign": campaign,
+        "campaign": campaign.model_dump(),
     }
 
 
