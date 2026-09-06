@@ -15,28 +15,42 @@ llm = ChatGoogleGenerativeAI(
 
 def detect_opportunity_with_llm(catalog: list[dict]) -> MerchantOpportunity:
     prompt = f"""
-You are an AI growth strategist for an ecommerce merchant.
+        You are an AI growth strategist for an ecommerce merchant.
 
-Analyze the merchant's product catalog and identify the single strongest
-cross-sell opportunity.
+        Analyze the merchant's product catalog and identify the single strongest
+        cross-sell opportunity.
 
-Catalog:
-{json.dumps(catalog, indent=2)}
+        Catalog:
+        {json.dumps(catalog, indent=2)}
 
-Rules:
-- Choose a source category that has products customers are likely to buy.
-- Choose a complementary target category that could naturally be purchased
-  with the source category.
-- Both categories MUST exist in the catalog.
-- Prefer opportunities that can increase average order value.
-- Do not invent products or categories.
-- Return a concise explanation of why this is a strong opportunity.
-- Return only the structured result.
-"""
+        Rules:
+        - Choose a source category that has products customers are likely to buy.
+        - Choose a complementary target category that could naturally be purchased
+        with the source category.
+        - Both categories MUST exist in the catalog.
+        - Prefer opportunities that can increase average order value.
+        - Do not invent products or categories.
+        - Return a concise explanation of why this is a strong opportunity.
+        - Return only the structured result.
+        """
 
     structured_llm = llm.with_structured_output(MerchantOpportunity)
+    opportunity = structured_llm.invoke(prompt)
 
-    return structured_llm.invoke(prompt)
+    valid_categories = {
+        product["category"]
+        for product in catalog
+    }
+
+    if (
+        opportunity.source_category not in valid_categories
+        or opportunity.target_category not in valid_categories
+    ):
+        raise ValueError(
+            "LLM returned an opportunity with categories not present in the catalog"
+        )
+
+    return opportunity
 
 
 def generate_campaign_with_llm(
