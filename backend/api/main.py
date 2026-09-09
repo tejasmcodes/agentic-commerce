@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from uuid import uuid4
 
@@ -7,7 +7,7 @@ from backend.agent.buyer.agent import buyer_agent
 from backend.agent.merchant.agent import merchant_agent
 
 app = FastAPI(title="Razorpay AI Commerce")
-
+workflow_owners: dict[str, str] = {}
 
 class BuyerStartRequest(BaseModel):
     request: str
@@ -15,11 +15,13 @@ class BuyerStartRequest(BaseModel):
 
 class BuyerApprovalRequest(BaseModel):
     thread_id: str
+    owner_token: str
     approved: bool
 
 
 class MerchantApprovalRequest(BaseModel):
     thread_id: str
+    owner_token: str
     approved: bool
 
 @app.get("/health")
@@ -30,6 +32,9 @@ def health():
 @app.post("/buyer/start")
 def buyer_start(payload: BuyerStartRequest):
     thread_id = str(uuid4())
+    owner_token = str(uuid4())
+
+    workflow_owners[thread_id] = owner_token
 
     initial_state = {
         "request": payload.request,
@@ -62,12 +67,21 @@ def buyer_start(payload: BuyerStartRequest):
 
     return {
         "thread_id": thread_id,
+        "owner_token": owner_token,
         "approval": interrupt.value,
     }
 
 
 @app.post("/buyer/approve")
 def buyer_approve(payload: BuyerApprovalRequest):
+    expected_token = workflow_owners.get(payload.thread_id)
+
+    if expected_token is None or payload.owner_token != expected_token:
+        raise HTTPException(
+            status_code=403,
+            detail="Invalid workflow ownership",
+        )
+
     config = {
         "configurable": {
             "thread_id": payload.thread_id
@@ -88,6 +102,9 @@ def buyer_approve(payload: BuyerApprovalRequest):
 @app.post("/merchant/start")
 def merchant_start():
     thread_id = str(uuid4())
+    owner_token = str(uuid4())
+
+    workflow_owners[thread_id] = owner_token
 
     initial_state = {
         "opportunity": None,
@@ -107,6 +124,7 @@ def merchant_start():
 
     return {
         "thread_id": thread_id,
+        "owner_token": owner_token,
         "status": "awaiting_approval",
         "approval": interrupt.value,
     }
@@ -114,6 +132,14 @@ def merchant_start():
 
 @app.post("/merchant/approve")
 def merchant_approve(payload: MerchantApprovalRequest):
+    expected_token = workflow_owners.get(payload.thread_id)
+
+    if expected_token is None or payload.owner_token != expected_token:
+        raise HTTPException(
+            status_code=403,
+            detail="Invalid workflow ownership",
+        )
+        
     config = {
         "configurable": {
             "thread_id": payload.thread_id
